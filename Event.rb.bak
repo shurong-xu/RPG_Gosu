@@ -1,0 +1,158 @@
+class Event
+	attr_accessor :x, :y, :z, :passable, :selectable, :active
+	def initialize(game, event_id, charaset_filename=nil, charaset_idx=nil)
+		@game = game
+		filename = 'Events\\' + event_id + '.txt'
+		datas = File.readlines(filename)
+		datas[0..7].each { |line| line.chomp! }
+		@x, @y = datas[0].to_i, datas[1].to_i
+		@z = GameMain::EVENTS_Z
+		@name = datas[2]
+		@passable = (datas[3] == 'true') ? true : false
+		@active = false
+		@tileset = charaset_filename != nil ? (Gosu::Image.load_tiles('Graphics/Charasets/' + charaset_filename + '.png', 32, 32)) : nil
+		@charaset_idx = datas[4].to_i
+		@face_to = datas[5].to_sym
+		@selectable = datas[6]
+		@move_speed = datas[7].to_f
+		@cmds = []
+		datas[8..-1].each do |c|
+			@cmds << c.chomp
+		end
+		@path = []
+	end
+
+	def update(mouse_x, mouse_y)
+		event_pose
+		if event_active?(mouse_x, mouse_y)
+			@active = true
+		else
+			if @path.length != 0 && !mouse_on_event?(mouse_x, mouse_y)
+				update_walking_event if !@active
+				move_to(@path[0]) if !@active
+				if @x == @path[0][0] * 32 && @y == @path[0][1] * 32
+					@path.shift
+				end
+			elsif @path.length == 0
+				direct = [[(@x - 32) / 32, @y / 32], [(@x + 32) / 32, @y / 32], [@x / 32, (@y - 32) / 32], [@x / 32, (@y + 32) / 32]]
+				num = rand(4)
+				if !@game.scene.map.is_solid?(direct[num][0], direct[num][1])
+					@path = [direct[num]]  # if Gosu.milliseconds / 175 % 10 == 0
+				end
+			end
+		end
+	end
+
+	def draw
+		@cur_image.draw(@x - @game.scene.map.camera_x, @y - @game.scene.map.camera_y, @z)
+	end
+
+	def event_pose
+		if @tileset != nil
+			case @face_to
+			when :down
+				@walking1, @standing1, @walking2 = @tileset[@charaset_idx..@charaset_idx + 2]
+			when :left
+				@walking1, @standing1, @walking2 = @tileset[@charaset_idx + 12..@charaset_idx + 14]
+			when :right
+				@walking1, @standing1, @walking2 = @tileset[@charaset_idx + 24..@charaset_idx + 26]
+			when :up
+				@walking1, @standing1, @walking2 = @tileset[@charaset_idx + 36..@charaset_idx + 38]
+			end
+			@cur_image = @standing1
+		end
+	end
+
+	def button_down(id)
+		case id
+		when Gosu::MS_LEFT
+			if @game.scene.actor.x > @x
+				@game.scene.actor.face_to = :left
+				@face_to = :right
+			elsif @game.scene.actor.x < @x
+				@game.scene.actor.face_to = :right
+				@face_to = :left
+			elsif @game.scene.actor.y > @y
+				@game.scene.actor.face_to = :up
+				@face_to = :down
+			elsif @game.scene.actor.y < @y
+				@game.scene.actor.face_to = :down
+				@face_to = :up
+			elsif @game.scene.actor.x == @x && @game.scene.actor.y == @y
+				if @x >= 32
+					@game.scene.actor.path = [[(@x - 32) / 32, @y / 32]]
+					@game.scene.actor.ending_face_to = :right
+					@face_to = :left
+				else
+					@game.scene.actor.path = [[(@x + 32) / 32, @y / 32]]
+					@game.scene.actor.ending_face_to = :left
+					@face_to = :right
+				end
+			end
+		end
+	end
+
+	def around?(event)
+		if event.x >= @x - 32 && event.x <= @x + 32 && event.y >= @y - 32 && event.y <= @y + 32
+			return true
+		else
+			return false
+		end
+	end
+
+	def mouse_on_event?(mouse_x, mouse_y)
+		x = ((mouse_x + @game.scene.map.camera_x) / 32).floor
+		y = ((mouse_y + @game.scene.map.camera_y) / 32).floor
+		return true if x == @x / 32 && y == @y / 32
+		return false
+	end
+
+	def event_active?(mouse_x, mouse_y)
+		x = ((mouse_x + @game.scene.map.camera_x) / 32).floor
+		y = ((mouse_y + @game.scene.map.camera_y) / 32).floor
+		if x == @x / 32 && y == @y / 32 && around?(@game.scene.actor)
+			return true
+		else
+			return false
+		end
+	end
+
+	def update_walking_event
+		if @tileset != nil
+			if Gosu.milliseconds / 175 % 4 == 0
+				@cur_image = @standing1
+			elsif Gosu.milliseconds / 175 % 4 == 1
+				@cur_image = @walking1
+			elsif Gosu.milliseconds / 175 % 4 == 2
+				@cur_image = @standing1
+			elsif Gosu.milliseconds / 175 % 4 == 3
+				@cur_image = @walking2
+			end
+		end
+	end
+
+	def move_to(path)
+		x, y = path[0] * 32, path[1] * 32
+		if @x < x
+			@face_to = :right
+			@x += @move_speed
+		elsif @x > x
+			@face_to = :left
+			@x -= @move_speed
+		elsif @y < y
+			@face_to = :down
+			@y += @move_speed
+		elsif @y > y
+			@face_to = :up
+			@y -= @move_speed
+		end
+	end
+
+	def dialog(texts)
+		@active = true
+		@game.scene.window_dialog.active = true
+		@game.scene.window_dialog.texts = texts
+		@game.scene.map.active = false
+	end
+	
+end
