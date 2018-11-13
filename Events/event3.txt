@@ -1,0 +1,10 @@
+2
+3
+event3
+false
+9
+down
+Actor1
+0.5
+random
+click

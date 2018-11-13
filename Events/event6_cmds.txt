@@ -1,0 +1,3 @@
+true
+@game.dialog(['Self Switch close!!'])
+event.self_switch = false

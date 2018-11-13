@@ -1,0 +1,2 @@
+true
+if !@game.switches[0] then @game.open_switch(0) else @game.close_switch(0) end

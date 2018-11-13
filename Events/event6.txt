@@ -1,0 +1,10 @@
+0
+14
+event6
+true
+-1
+down
+
+0
+stay
+auto

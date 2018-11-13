@@ -1,0 +1,10 @@
+2
+4
+event1
+false
+3
+left
+Actor1
+0.5
+stay
+click

@@ -1,0 +1,3 @@
+true
+@game.maku = 300
+map = Map.new(@game, GameMain::MAP_Z, 'map1');@game.teleport(map, 0, 1, :down)

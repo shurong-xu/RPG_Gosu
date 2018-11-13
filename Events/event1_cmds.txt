@@ -1,0 +1,7 @@
+true
+@game.dialog(['event1:', 'hello!'])
+@game.dialog(['event1:', 'this is a test'])
+@game.open_switch(1)
+@game.dialog(['event1:', 'this is test 2'])
+@game.set_variable('game_process', 1)
+event.self_switch = false
