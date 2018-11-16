@@ -1,0 +1,12 @@
+﻿
+10
+7
+西院弟子
+false
+0
+up
+xiyuandizi
+0.5
+stay
+click
+npc

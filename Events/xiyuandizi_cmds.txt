@@ -1,0 +1,7 @@
+﻿
+true
+@game.dialog(["#{event.name}：","hello！ #{@game.scene.actor.name}"])
+@game.dialog(["#{event.name}：","我是无量剑派#{event.name}哦~"])
+@game.dialog(["#{event.name}：","你敢惹我我就让师父杀了你！"])
+@game.dialog(["#{@game.scene.actor.name}:","......"])
+@game.dialog(["#{@game.scene.actor.name}:","（怎么无量剑派尽是这样的傻逼？？）"])

@@ -1,0 +1,12 @@
+﻿
+2
+7
+钟灵
+false
+0
+right
+zhongling
+0.5
+move_in_path
+click
+npc

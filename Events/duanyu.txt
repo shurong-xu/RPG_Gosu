@@ -1,0 +1,12 @@
+
+7
+6
+’i—_
+false
+0
+right
+duanyu
+0.5
+move_in_path
+click
+npc

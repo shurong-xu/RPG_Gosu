@@ -1,6 +1,7 @@
+
 @game.switches[1] || true
 @game.dialog(['Hello1'])
 @game.dialog(['Hello2'])
 @game.dialog(['Hello3'])
-@game.maku = 300
+@game.close_curtain
 map = Map.new(@game, GameMain::MAP_Z, 'map2');@game.teleport(map, 0, 13, :up)

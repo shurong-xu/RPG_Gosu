@@ -1,0 +1,12 @@
+
+9
+3
+ç∂éqñs
+false
+0
+down
+zuozimu
+0.5
+move_in_path
+click
+npc

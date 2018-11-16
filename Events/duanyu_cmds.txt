@@ -1,0 +1,6 @@
+﻿
+true
+@game.dialog(['段誉：','你会六脉神剑么？'])
+@game.dialog(["#{@game.scene.actor.name}：",'额……不会。'])
+@game.dialog(['段誉：','哈哈，那当然了，六脉神剑是我大理段氏绝不外传的绝学~'])
+@game.dialog(["#{@game.scene.actor.name}：",'（那你还问我会不会……）'])

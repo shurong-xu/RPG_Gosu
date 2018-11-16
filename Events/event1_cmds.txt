@@ -1,7 +1,127 @@
+﻿
 true
-@game.dialog(['event1:', 'hello!'])
-@game.dialog(['event1:', 'this is a test'])
-@game.open_switch(1)
-@game.dialog(['event1:', 'this is test 2'])
-@game.set_variable('game_process', 1)
-event.self_switch = false
+@game.event_executing = true
+@game.scene.actor.path = @game.scene.map.bfs([10, 14],[7, 11])
+@game.waiting_for_events_moving
+@game.scene.actor.face_to = :right;@game.scene.actor.actor_pose
+@game.dialog(['东院弟子：','师弟，看剑！'])
+selected_event = @game.select_event(2);@game.move_to(selected_event, 4, [[10, 8],[10, 9],[10, 10]], :back)
+selected_event = @game.select_event(1);@game.move_to(selected_event, 4, [[10, 6],[10, 7],[10, 8],[10, 9]])
+@game.waiting_for_events_moving
+@game.dialog(['东院弟子：','...'])
+selected_event = @game.select_event(2);@game.move_to(selected_event, 4, [[10, 9],[10, 8]])
+selected_event = @game.select_event(1);@game.move_to(selected_event, 4, [[10, 8],[10, 7]])
+@game.waiting_for_events_moving
+@game.dialog(['东院弟子：','嗯嗯，师弟，你还真有两下子...'])
+@game.dialog(['东院弟子：','不过你一定接不下我这一招！'])
+@game.dialog(['旁观少年：','嘻嘻……'])
+@game.dialog(['左子穆：','……'])
+selected_event = @game.select_event(2);@game.move_to(selected_event, 4, [[10, 9],[10, 10]], :back)
+selected_event = @game.select_event(1);@game.move_to(selected_event, 4, [[10, 8],[10, 9]])
+@game.waiting_for_events_moving
+@game.dialog(['东院弟子：','哈哈哈！','师弟，承让了！'])
+@game.dialog(['西院弟子：','......'])
+@game.dialog(['旁观少年：','噗……'])
+@game.dialog(['左子穆：','……！'])
+selected_event = @game.select_event(2);@game.move_to(selected_event, 2, [[11, 10],[11, 9],[11, 8],[11, 7],[11, 6],[11, 5],[11, 4],[12, 4], [12, 3], [13, 3], [13, 2]])
+selected_event = @game.select_event(1);@game.move_to(selected_event, 2, [[10, 8],[10, 7],[10, 6]])
+@game.waiting_for_events_moving
+selected_event = @game.select_event(2);selected_event.face_to = :down;selected_event.event_pose
+#selected_event = @game.select_event(1);selected_event.face_to = :down;selected_event.event_pose
+selected_event = @game.select_event(4);selected_event.face_to = :right;selected_event.event_pose
+@game.dialog(['左子穆：','东宗已胜了三阵，看来这‘剑湖宫’又要让东宗再住五年了。'])
+@game.dialog(['左子穆：','辛师妹，咱们还须比下去么？'])
+selected_event = @game.select_event(3);selected_event.face_to = :left;selected_event.event_pose
+@game.dialog(['辛双清：','左师兄果然调教得好徒儿！','但不知左师兄对‘无量玉壁’的钻研，','这五年来可已大有心得么？'])
+@game.dialog(['左子穆：','（小声）师妹怎地忘了本派的规矩？'])
+@game.dialog(['左子穆：','（小声）今日外人众多，切不可再谈此事……'])
+@game.dialog(['辛双清：','哼……'])
+selected_event = @game.select_event(3);selected_event.face_to = :down;selected_event.event_pose
+@game.wait_for(event, 2)
+@game.dialog(['左子穆：','辛师妹今年派出的弟子，剑术上的造诣着实可观啊！'])
+@game.dialog(['左子穆：','尤其是刚刚这一场，我们胜得更是侥幸。'])
+@game.dialog(['左子穆：','师侄年纪轻轻，居然练到这般地步，前途当真不可限量。','五年之后，只怕咱们东西两宗得换换位置了。'])
+@game.wait_for(event, 0.5)
+selected_event = @game.select_event(4);selected_event.face_to = :down;selected_event.event_pose
+@game.dialog(['左子穆：','我那劣徒适才出招之时，这位段兄连声嗤笑，似乎颇不以为然。','敢问段兄大号如何称呼？'])
+selected_event = @game.select_event(5);@game.move_to(selected_event, 0.5, [[7, 6],[8, 6],[9, 6]])
+@game.waiting_for_events_moving
+selected_event = @game.select_event(5);selected_event.face_to = :up;selected_event.event_pose
+@game.dialog(['旁观少年：','在下段誉。'])
+@game.dialog(['左子穆：','很好。'])
+@game.dialog(['左子穆：','徒儿，刚才人家笑你呢。','你向他请教请教吧。'])
+@game.dialog(['东院弟子：','是，师父！'])
+selected_event = @game.select_event(1);selected_event.face_to = :left;selected_event.event_pose
+@game.dialog(['东院弟子：','段朋友，请！'])
+selected_event = @game.select_event(5);selected_event.face_to = :right;selected_event.event_pose;@game.move_to(selected_event, 0.5, [[8, 6]],:back)
+@game.waiting_for_events_moving
+@game.dialog(['段誉：','很好，你练吧，我瞧着。'])
+selected_event = @game.select_event(5);selected_event.face_to = :right;selected_event.event_pose
+selected_event = @game.select_event(1);@game.move_to(selected_event, 2, [[9, 6]])
+@game.waiting_for_events_moving
+@game.dialog(['东院弟子：','你……你说什么！'])
+@game.dialog(['段誉：','你手里拿了一把剑晃来晃去，想是要练剑，那么你就练吧。'])
+@game.dialog(['段誉：','我向来不爱瞧人家动刀使剑。','可是既来之，则安之，那也不妨瞧着。'])
+@game.dialog(['东院弟子：','我师父叫你这小子也下场来，咱们比划比划！'])
+selected_event = @game.select_event(5);selected_event.face_to = :right;selected_event.event_pose;@game.move_to(selected_event, 0.5, [[7, 6]],:back);
+@game.waiting_for_events_moving
+selected_event = @game.select_event(5);selected_event.status = :ahead;selected_event.face_to = :right
+@game.dialog(['段誉：','我一来不会，二来怕输，三来怕痛，四来怕死。','因此是不比的，我说不比，就是不比。'])
+selected_event = @game.select_event(1);@game.move_to(selected_event, 2, [[8, 6]])
+@game.waiting_for_events_moving
+@game.dialog(['东院弟子：','你到底是真的不会，还是装傻？'])
+@game.dialog(['段誉：','我自然是真的不会，装傻有什么好装？'])
+@game.dialog(['东院弟子：','你到无量山剑湖宫中来撒野，想必是活得不耐烦了。','你是何人门下，受了谁的指使？若不直说，莫怪大爷剑下无情！'])
+@game.dialog(['段誉：','你这位大爷，怎地如此狠霸霸的？','我平生最不爱瞧人打架，更不爱打架，也没有任何人指使我。'])
+@game.dialog(['东院弟子：','废话少说，看掌！'])
+@game.wait_for(event, 2)
+@game.dialog(['东院弟子：','我还道是什么了不起的人物呢！','哪知竟然连这一巴掌也躲不过，果然是个脓包！'])
+@game.dialog(['段誉：','我原本是来游山玩水，谁知道你们要比剑打架了？','这样你砍我杀的，有什么好看？','还不如瞧人家耍猴儿戏好玩得多。'])
+@game.dialog(['段誉：','再见，再见，我这可要走了。'])
+selected_event = @game.select_event(5);@game.move_to(selected_event, 0.5, [[7, 5],[8, 5],[9, 5],[10, 5],[10, 6]])
+@game.waiting_for_events_moving
+@game.dialog(['东院弟子：','站住！'])
+selected_event = @game.select_event(1);@game.move_to(selected_event, 2, [[9, 6]])
+@game.waiting_for_events_moving
+@game.dialog(['东院弟子：','你既然不会武功，就这么夹着尾巴逃了，那也罢了。','怎么又说看我们比剑，还不如看耍猴儿戏？','这话未免欺人太甚。'])
+@game.dialog(['东院弟子：','我给你两条路走。'])
+@game.dialog(['东院弟子：','要么，就跟我比划比划，叫你领教一下比耍猴儿还不如的剑法。','要么你就跟我师父磕十八个响头，自己说三声‘放屁’！'])
+@game.dialog(['段誉：','你放屁？不怎么臭啊！'])
+@game.dialog(['东院弟子：','臭小子，找死！'])
+@game.dialog(["#{@game.scene.actor.name}：",'（糟了，该怎么办呢……？）'])
+@game.show_selections(['救段誉','无动于衷'])
+if @game.selection == 1 then event.cmd_idx += 5 end
+if @game.selection == 0 then @game.scene.actor.move_speed = 8;@game.scene.actor.path = @game.scene.map.bfs([7, 11],[9, 7]) end
+if @game.selection == 0 then @game.waiting_for_events_moving end
+if @game.selection == 0 then @game.scene.actor.face_to = :up;@game.scene.actor.actor_pose end
+if @game.selection == 0 then @game.scene.actor.haogan[1] += 1;@game.scene.actor.famous += 1;@game.scene.actor.move_speed = 2;@game.dialog(["#{@game.scene.actor.name}：", '段兄弟，小心！！']) end
+if @game.selection == 0 then puts '和东院弟子战斗' end
+@game.select_event(6).self_switch = true
+@game.dialog(['无名少女：','住手！！'])
+@game.dialog(['无名少女：','让你尝尝本姑娘的厉害！'])
+selected_event = @game.select_event(1);selected_event.face_to = :left
+@game.wait_for(event, 1)
+selected_event = @game.select_event(1);selected_event.face_to = :right
+@game.wait_for(event, 1)
+selected_event = @game.select_event(1);selected_event.face_to = :left
+@game.wait_for(event, 1)
+selected_event = @game.select_event(1);selected_event.face_to = :down
+@game.dialog(['东院弟子：','是毒蛇！！'])
+@game.dialog(['无名少女：','段兄弟，你赶紧到我这边来！'])
+@game.dialog(['左子穆：','小心毒蛇！'])
+@game.move_to(@game.select_event(5), 2, [[10, 12]])
+@game.move_to(@game.select_event(4), 4, [[9, 5]])
+@game.select_event(1).face_to = :up;@game.select_event(1).event_pose
+@game.waiting_for_events_moving
+@game.dialog(['东院弟子：','多谢师父替徒儿斩杀毒蛇！'])
+if @game.selection == 0 then @game.select_event(5).face_to = :up;@game.select_event(5).event_pose;@game.dialog(['段誉：','啊，对了！多谢兄台出手相助。']) end
+@game.move_to(@game.select_event(5), 2, [[2, 12], [2, 8]])
+@game.waiting_for_events_moving
+@game.dialog(['段誉：','姑娘，多谢你出手相救。'])
+@game.select_event(6).face_to = :down;@game.select_event(6).event_pose
+@game.dialog(['无名少女：','那个恶人打你，你为什么不还手？'])
+@game.dialog(['段誉：', '我真不会武功……'])
+@game.select_event(6).face_to = :right;@game.select_event(6).event_pose
+@game.dialog(['无名少女：','喂，老头！', '你弄死了我的蛇儿，我可要跟你不客气了！'])
+@game.select_event(5).face_to = :right;@game.select_event(5).event_pose
+@game.event_executing = false;event.self_switch = false

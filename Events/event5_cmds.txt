@@ -1,3 +1,4 @@
+
 true
-@game.maku = 300
+@game.close_curtain
 map = Map.new(@game, GameMain::MAP_Z, 'map1');@game.teleport(map, 0, 1, :down)
