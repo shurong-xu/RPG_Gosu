@@ -1,27 +1,29 @@
 class Event
-  attr_accessor :x, :y, :z, :name, :passable, :selectable, :cmds, :cmd_idx, :active, :active2, :path, :exe_type, :self_switch
+  attr_accessor :x, :y, :z, :name, :passable, :face_to, :move_speed, :move_type, :selectable, :cmds, :cmd_idx, :active, :active2, :path, :exe_type, :self_switch, :event_type, :status
   def initialize(game, event_id)
     @game = game
     attr_filename = 'Events\\' + event_id + '.txt'
     cmd_filename = 'Events\\' + event_id + '_cmds.txt'
-    attrs = File.readlines(attr_filename).map{ |line| line = line.chomp }
-    @cmds = File.readlines(cmd_filename).map{ |line| line = line.chomp }
-    @cmd_idx = 1
-    @x, @y = attrs[0].to_i * 32, attrs[1].to_i * 32
+    attrs = File.readlines(attr_filename, {encoding:'utf-8'}).map{ |line| line = line.chomp }
+    @cmds = File.readlines(cmd_filename, {encoding:'utf-8'}).map{ |line| line = line.chomp }
+    @cmd_idx = 2
+    @x, @y = attrs[1].to_i * 32, attrs[2].to_i * 32
     @z = GameMain::EVENTS_Z
-    @name = attrs[2]
-    @passable = (attrs[3] == 'true') ? true : false
-    charaset_filename = attrs[6].chomp 
+    @name = attrs[3]
+    @passable = (attrs[4] == 'true') ? true : false
+    charaset_filename = attrs[7].chomp 
     @tileset = charaset_filename != '' ? (Gosu::Image.load_tiles('Graphics/Charasets/' + charaset_filename + '.png', 32, 32)) : nil
-    @charaset_idx = attrs[4].to_i
-    @face_to = attrs[5].to_sym
-    @move_speed = attrs[7].to_f
-    @move_type = attrs[8].to_sym
+    @charaset_idx = attrs[5].to_i
+    @face_to = attrs[6].to_sym
+    @move_speed = attrs[8].to_f
+    @move_type = attrs[9].to_sym
     @active = false
     @active2 = eval(@cmds[0])
     @path = []
-    @exe_type = attrs[9].to_sym
+    @exe_type = attrs[10].to_sym
+    @event_type = attrs[11].to_sym
     @self_switch = true
+    @status = :ahead
   end
 
   def draw
@@ -29,7 +31,7 @@ class Event
   end
 
   def update(actor, mouse_x, mouse_y)
-    @active2 = eval(@cmds[0])
+    @active2 = eval(@cmds[1])
     event_pose
     if !mouse_on?(mouse_x, mouse_y) && @active2 && @self_switch
       case @move_type
@@ -41,6 +43,13 @@ class Event
           random_move(actor)
         else
           move_to_actor(actor)
+        end
+      when :move_in_path
+        if @path.length != 0
+          move_to(actor, @path[0])
+          @path.shift if @x == @path[0][0] * 32 && @y == @path[0][1] * 32
+        else
+          @status = :ahead
         end
       when :stay
       end
@@ -63,15 +72,29 @@ class Event
 
   def event_pose
     if @tileset != nil
-      case @face_to
-      when :down
-        @walking1, @standing1, @walking2 = @tileset[@charaset_idx..@charaset_idx + 2]
-      when :left
-        @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 12..@charaset_idx + 14]
-      when :right
-        @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 24..@charaset_idx + 26]
-      when :up
-        @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 36..@charaset_idx + 38]
+      case @status
+      when :ahead
+        case @face_to
+        when :down
+          @walking1, @standing1, @walking2 = @tileset[@charaset_idx..@charaset_idx + 2]
+        when :right
+          @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 3..@charaset_idx + 5]
+        when :left
+          @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 6..@charaset_idx + 8]
+        when :up
+          @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 9..@charaset_idx + 11]
+        end
+      when :back
+        case @face_to
+        when :up
+          @walking1, @standing1, @walking2 = @tileset[@charaset_idx..@charaset_idx + 2]
+        when :left
+          @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 3..@charaset_idx + 5]
+        when :right
+          @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 6..@charaset_idx + 8]
+        when :down
+          @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 9..@charaset_idx + 11]
+        end
       end
       @cur_image = @standing1
     end
@@ -156,7 +179,7 @@ class Event
   end
 
   def mouse_on?(mouse_x, mouse_y)
-    if !@passable && @x / 32 == ((mouse_x + @game.scene.map.camera_x) / 32).floor && @y / 32 == ((mouse_y + @game.scene.map.camera_y) / 32).floor
+    if !@passable && !@game.event_executing && @x / 32 == ((mouse_x + @game.scene.map.camera_x) / 32).floor && @y / 32 == ((mouse_y + @game.scene.map.camera_y) / 32).floor
       return true
     end
     return false
@@ -227,6 +250,5 @@ class Event
       @path = paths.length != 0 ? [paths[rand(paths.length)]] : []
     end
   end
-
 
 end

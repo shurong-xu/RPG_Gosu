@@ -1,7 +1,7 @@
 class WindowDialog < WindowBase
   def initialize(game, texts=[])
     @game = game
-    super(@game, 160, 320, GameMain::WINDOW_Z, 448, 128, texts, false, false)
+    super(@game, 160, 336, GameMain::WINDOW_Z, 448, 128, texts, false, false)
     @active = false
   end
 

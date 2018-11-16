@@ -1,5 +1,5 @@
 class Actor
-  attr_accessor :x, :y, :face_to, :ending_face_to, :path
+  attr_accessor :name, :x, :y, :face_to, :ending_face_to, :move_speed, :path, :status, :famous, :haogan
   def initialize(game, charaset_filename, charaset_idx, name, x, y, z)
     @game = game
     @name = name
@@ -11,6 +11,9 @@ class Actor
     @ending_face_to = nil
     @move_speed = 2
     @path = []
+    @haogan = [0] * 999
+    @famous = 0
+    @status = :ahead
   end
 
   def update
@@ -23,15 +26,29 @@ class Actor
   end
 
   def actor_pose
-    case @face_to
-    when :down
-      @walking1, @standing1, @walking2 = @tileset[@charaset_idx..@charaset_idx + 2]
-    when :left
-      @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 12..@charaset_idx + 14]
-    when :right
-      @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 24..@charaset_idx + 26]
-    when :up
-      @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 36..@charaset_idx + 38]
+    case @status
+    when :ahead
+      case @face_to
+      when :down
+        @walking1, @standing1, @walking2 = @tileset[@charaset_idx..@charaset_idx + 2]
+      when :right
+        @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 3..@charaset_idx + 5]
+      when :left
+        @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 6..@charaset_idx + 8]
+      when :up
+        @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 9..@charaset_idx + 11]
+      end
+    when :back
+      case @face_to
+      when :up
+        @walking1, @standing1, @walking2 = @tileset[@charaset_idx..@charaset_idx + 2]
+      when :left
+        @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 3..@charaset_idx + 5]
+      when :right
+        @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 6..@charaset_idx + 8]
+      when :down
+        @walking1, @standing1, @walking2 = @tileset[@charaset_idx + 9..@charaset_idx + 11]
+      end
     end
     @cur_image = @standing1
   end

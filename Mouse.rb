@@ -2,8 +2,10 @@ class Mouse
   attr_accessor :img, :normal, :dialog
   def initialize(game)
     @game = game
-    @normal = Gosu::Image.new('Graphics/Mouse/normal.bmp')
-    @dialog = Gosu::Image.new('Graphics/Mouse/dialog.bmp')
+    folder_path = 'Graphics/Mouse/'
+    @normal = Gosu::Image.new(folder_path + 'normal.bmp')
+    @dialog = Gosu::Image.new(folder_path + 'dialog.bmp')
+    @get_item = Gosu::Image.new(folder_path + 'get_item.bmp')
     @img = @normal
   end
 
@@ -14,7 +16,11 @@ class Mouse
   def update(x, y)
     @game.scene.map.events.each do |event|
       if event.active2 && event.self_switch && event.mouse_on?(x, y)
-        @img = @dialog
+        if event.event_type == :npc
+          @img = @dialog 
+        elsif event.event_type == :box
+          @img = @get_item 
+        end
         break
       else
         @img = @normal

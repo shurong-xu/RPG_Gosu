@@ -16,9 +16,9 @@ module Tileset
           nil
         else
           text.to_i
-        end #case
+        end
       end
     end
-      return tiles
+    return tiles
   end
 end

@@ -1,5 +1,5 @@
 class Map
-  attr_accessor :width, :height, :map_id, :camera_x, :camera_y, :active, :events, :cur_event
+  attr_accessor :width, :height, :map_id, :camera_x, :camera_y, :active, :events, :event_moving, :cur_event
   def initialize(game, z, map_id, camera_x=0, camera_y=0)
     @game = game
     @z = z
@@ -7,7 +7,7 @@ class Map
     @tiles_low = Tileset.load_map(@game, @map_id + "_low.txt")
     @tiles_mid = Tileset.load_map(@game, @map_id + "_mid.txt")
     @tiles_hig = Tileset.load_map(@game, @map_id + "_hig.txt")
-    tileset_filename = "Graphics/Tilesets/" + File.readlines(@map_id + "_low.txt")[0].chomp + ".png"
+    tileset_filename = "Graphics/Tilesets/" + File.readlines(@map_id + "_low.txt")[0].chomp
     @tileset = Gosu::Image.load_tiles(tileset_filename, 32, 32, :tileable => false)
     @solid_blocks = Tileset.load_map(@game, @map_id + "_sld.txt")
     @width = @tiles_low.size
@@ -19,9 +19,11 @@ class Map
     @mark_x = @mark_y = 0
     events = File.readlines(@map_id + '_sld.txt')[0].chomp.split(',')
     @events = []
+    @event_moving = false
     events.each do |e|
       @events << Event.new(@game, e)
     end
+    @events[6].self_switch = false
     @cur_event = nil
   end
 
@@ -46,15 +48,18 @@ class Map
     actor = @game.scene.actor
     @events.each do |event|
       event.update(actor, mouse_x, mouse_y) if !event.active
+      if !@event_moving
       if event.active2 && event.self_switch && event.exe_type == :auto
         eval(event.cmds[event.cmd_idx])
+        @game.game_date.tick -= @game.game_date.speed
         event.cmd_idx += 1
-        event.cmd_idx = 1 if event.cmd_idx == event.cmds.length 
+        event.cmd_idx = 2 if event.cmd_idx == event.cmds.length 
       elsif event.active2 && event.self_switch && event.exe_type == :over_on && event.cmd_idx != event.cmds.length
         if event.x == actor.x && event.y == actor.y
           eval(event.cmds[event.cmd_idx])
+          @game.game_date.tick -= @game.game_date.speed
           event.cmd_idx += 1
-          event.cmd_idx = 1 if event.cmd_idx == event.cmds.length
+          event.cmd_idx = 2 if event.cmd_idx == event.cmds.length
         end
       elsif event.active2 && event.self_switch && event.exe_type == :close_to_actor && event.cmd_idx != event.cmds.length
         if ((event.x - actor.x).abs <= 32 && event.y == actor.y) || ((event.y - actor.y).abs <= 32 && event.x == actor.x) && event.is_face_to_actor?(actor)
@@ -63,19 +68,21 @@ class Map
           event.face_to_actor(actor)
           event.event_pose
           eval(event.cmds[event.cmd_idx])
+          @game.game_date.tick -= @game.game_date.speed
           event.cmd_idx += 1
-          event.cmd_idx = 1 if event.cmd_idx == event.cmds.length
+          event.cmd_idx = 2 if event.cmd_idx == event.cmds.length
         end
       elsif event.active2 && event.self_switch && event.exe_type == :click && @cur_event && event == @cur_event && event.cmd_idx != event.cmds.length
         @cur_event.face_to_actor(actor)
         @cur_event.event_pose
         if @cur_event.cmd_idx < @cur_event.cmds.length
           eval(@cur_event.cmds[@cur_event.cmd_idx])
+          @game.game_date.tick -= @game.game_date.speed
           @cur_event.cmd_idx += 1
-        else
-          @cur_event.cmd_idx = 1
         end
       end
+      end
+      @event_moving = false if !has_moving_events?
     end
   end
 
@@ -86,13 +93,13 @@ class Map
         @events.each do |event|
           @cur_event = event.choose_event(mouse_x, mouse_y)
           if @cur_event != nil
-            @cur_event.cmd_idx = 1
+            @cur_event.cmd_idx = 2
             break
           end
         end
       end
       actor = @game.scene.actor
-      if !@cur_event
+      if !@game.event_executing && !@cur_event && !@event_moving
         start = [actor.x / 32, actor.y / 32]
         desti = [((mouse_x + @camera_x) / 32).floor, ((mouse_y + @camera_y) / 32).floor]
         path = bfs(start, desti)
@@ -201,5 +208,14 @@ class Map
     color = Gosu::Color.new(@mark_cursor_opacity, 255, 255, 255)
     @game.draw_triangle(desti[0]*32 - @camera_x, desti[1]*32 - @camera_y, color, desti[0]*32 + 32 - @camera_x, desti[1]*32 - @camera_y, color, desti[0]*32 + 16 - @camera_x, desti[1]*32 + 32 - @camera_y, color, @z + 5)
     @mark_cursor_opacity -= 5 if @mark_cursor_opacity > 0
+  end
+
+  def has_moving_events?
+    return true if @game.scene.actor.path.length != 0
+    @events.each do |event|
+      next if event.move_type != :move_in_path
+      return true if event.path.length != 0
+    end
+    return false
   end
 end
